@@ -1,6 +1,6 @@
 {
   "name": "actual-request-url",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "license": "ISC",
   "main": "lib/index.js",
   "files": [
