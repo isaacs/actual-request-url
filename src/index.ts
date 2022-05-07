@@ -51,7 +51,9 @@ export const getForwardVal = (req: Req, key: string): string | null => {
   const keq = `${key.toLowerCase()}=`
   if (fw && typeof fw === 'string') {
     const firstFw = (fw.split(',').shift() as string).split(';')
-    const fwKey = firstFw.filter(f => f.toLowerCase().trim().startsWith(keq))[0]
+    const fwKey = firstFw.filter(f =>
+      f.toLowerCase().trim().startsWith(keq)
+    )[0]
     if (fwKey) {
       return fwKey.trim().substring(keq.length)
     }

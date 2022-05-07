@@ -20,7 +20,7 @@ Anyone can set them via `curl` to make it look like they're
 coming from somewhere other than they are.
 
 So, very important: **Do not place any kind of trust in these
-fields!**  But, for low-risk decisions, like redirecting to
+fields!** But, for low-risk decisions, like redirecting to
 `https` from a `http` request, it's fine.
 
 ## USAGE
@@ -50,6 +50,39 @@ import {
 } from 'actual-request-url'
 ```
 
+Actual real-world example, forward `http` requests to an express
+app to `https` in productino (note: you should _also_ set [HTTP
+Strict Transport Security
+headers](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security)
+so it can't be MITM'ed after the first request!)
+
+```js
+import { actualRequestUrl, getProto } from 'actual-request-url'
+
+const forceHTTPS = (req, res /* express: next */) => {
+  // in production, insist on https
+  if (process.env.NODE_ENV === 'production' && getProto(req) !== 'https') {
+    const u = actualRequestUrl(req)
+    if (!u) {
+      // express: res.status(400).send('Invalid url')
+      // fastify: res.code(400).send('Invalid url')
+      // raw node:
+      res.statusCode = 400
+      res.end('Invalid url')
+    } else {
+      u.protocol = 'https:'
+      // express: res.redirect(String(u), 301)
+      // fastify: res.redirect(301, String(u))
+      // raw node:
+      res.statusCode = 301
+      res.setHeader('location', String(u))
+      res.end(`Moved permanently: ${u}`)
+    }
+  }
+  // express: next()
+}
+```
+
 ## API
 
 ### `actualRequestUrl(req) => URL | null`
@@ -57,7 +90,9 @@ import {
 Give it a request (either node http/https server request, or a
 fetch.Request lookalike).
 
-Returns a URL object if it could be parsed, otherwise null.
+Returns a URL object if it could be parsed, otherwise null. (If
+it returns `null`, you _probably_ should reply with a 4xx error
+of some sort.)
 
 ### `getProto(req) => string`
 
@@ -69,4 +104,5 @@ Return the hostname the user allegedly used.
 
 ### `getPath(req) => string`
 
-Return the string portion of the request url.
+Return the path portion of the request url (ie, the part that is
+normally found on Node's `req.url`).

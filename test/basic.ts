@@ -12,19 +12,23 @@ import {
   Req,
 } from '../lib/index'
 
-t.match({
-  getProto,
-  getHost,
-  getPort,
-  getPath,
-  getForwardVal,
-}, {
-  getProto: Function,
-  getHost: Function,
-  getPort: Function,
-  getPath: Function,
-  getForwardVal: Function,
-}, 'exported helper methods')
+t.match(
+  {
+    getProto,
+    getHost,
+    getPort,
+    getPath,
+    getForwardVal,
+  },
+  {
+    getProto: Function,
+    getHost: Function,
+    getPort: Function,
+    getPath: Function,
+    getForwardVal: Function,
+  },
+  'exported helper methods'
+)
 
 // [req, url][]
 const cases: [Req, string | null][] = [
@@ -95,7 +99,10 @@ const cases: [Req, string | null][] = [
     {
       url: new URL('http://x.com:443/a/b/c?x=y'),
       headers: new Headers([
-        ['forwarded', 'port=80;host=example.com;proto=https, port=443;host=x.com;proto=http'],
+        [
+          'forwarded',
+          'port=80;host=example.com;proto=https, port=443;host=x.com;proto=http',
+        ],
       ]),
       socket: { encrypted: true },
     },
@@ -112,7 +119,10 @@ const cases: [Req, string | null][] = [
   [
     {
       url: '/a/b/c?x=y',
-      headers: { host: 'example.com', forwarded: 'port=80;\n   proto=https' },
+      headers: {
+        host: 'example.com',
+        forwarded: 'port=80;\n   proto=https',
+      },
     },
     'https://example.com:80/a/b/c?x=y',
   ],
@@ -173,9 +183,8 @@ const cases: [Req, string | null][] = [
     {
       url: 'http://example.com/a/b/c?x=y',
     },
-    null
+    null,
   ],
-
 ]
 
 for (const [req, expect] of cases) {
