@@ -1,5 +1,6 @@
 import t from 'tap'
-import { Headers } from 'node-fetch'
+import fetch, { Headers } from 'node-fetch'
+import { createServer } from 'node:http'
 
 import {
   actualRequestUrl,
@@ -185,3 +186,29 @@ for (const [req, expect] of cases) {
   const actual = u === null ? u : String(u)
   t.equal(actual, expect, `expect ${expect}`, { req })
 }
+
+t.test('actual http server test', t => {
+  // mostly for typescript purposes, just to show that it works with
+  // a real http request, and doesn't get crabby about types.
+  const server = createServer((req, res) => {
+    server.close()
+    res.setHeader('connection', 'close')
+    const u = actualRequestUrl(req)
+    res.end(JSON.stringify(u === null ? u : String(u)))
+  })
+  const c = process.env.TAP_CHILD_ID
+  const port = 10000 + (c === undefined ? 0 : +c)
+  server.listen(port, async () => {
+    const res = await fetch(`http://127.0.0.1:${port}/a/b/c?x=y`, {
+      headers: {
+        'x-forwarded-proto': 'https',
+        'x-forwarded-host': 'example.com',
+        forwarded: 'port=443',
+        host: '127.0.0.1',
+      },
+    })
+    const actual = await res.json()
+    t.equal(actual, 'https://example.com/a/b/c?x=y')
+    t.end()
+  })
+})

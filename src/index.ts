@@ -1,4 +1,5 @@
 import type { HeadersInit } from 'node-fetch'
+import type { IncomingHttpHeaders } from 'node:http'
 
 interface Sock {
   encrypted?: boolean
@@ -7,7 +8,7 @@ interface Sock {
 type MaybeSock = Sock | undefined
 export interface Req {
   url?: string | URL | null
-  headers?: HeadersInit
+  headers?: HeadersInit | IncomingHttpHeaders
   socket?: Sock
 }
 
