@@ -1,4 +1,4 @@
-import type { HeadersInit } from 'node-fetch'
+import type { HeadersInit as NFHI } from 'node-fetch'
 import type { IncomingHttpHeaders } from 'node:http'
 
 interface Sock {
@@ -8,7 +8,7 @@ interface Sock {
 type MaybeSock = Sock | undefined
 export interface Req {
   url?: string | URL | null
-  headers?: HeadersInit | IncomingHttpHeaders
+  headers?: HeadersInit | NFHI | IncomingHttpHeaders
   socket?: Sock
 }
 
