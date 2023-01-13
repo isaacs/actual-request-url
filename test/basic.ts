@@ -181,6 +181,14 @@ const cases: [Req, string | null][] = [
   ],
   [
     {
+      url: '/a/b/c?x=y',
+      headers: { host: 'example.com:1234', 'x-forwarded-protocol': 'http' },
+      socket: { localPort: 1234 },
+    },
+    'http://example.com:1234/a/b/c?x=y',
+  ],
+  [
+    {
       url: 'http://example.com/a/b/c?x=y',
     },
     null,

@@ -135,7 +135,8 @@ export const actualRequestUrl = (req: Req): URL | null => {
     !(
       (port === '80' && proto === 'http') ||
       (port === '443' && proto === 'https')
-    )
+    ) &&
+    !/:[0-9]+$/.test(host)
 
   try {
     return new URL(
